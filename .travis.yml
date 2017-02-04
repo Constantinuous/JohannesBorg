@@ -1,5 +1,4 @@
 language: csharp
-mono: none
 dotnet: 1.0.0-preview2-003131
 dist: trusty
 sudo: false
@@ -9,10 +8,11 @@ solution: JohannesBorg.sln
 
 before_install:
   - time wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+  - mono nuget.exe install
 install:
-  - nuget.exe
-  - nuget.exe restore JohannesBorg.sln
-  - nuget.exe install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
+  - nuget
+  - nuget restore JohannesBorg.sln
+  - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
 script:
   - dotnet --version
   - dotnet /p:Configuration=Release JohannesBorg.sln
