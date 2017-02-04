@@ -1,5 +1,7 @@
 language: csharp
 solution: JohannesBorg.sln
+mono: none
+dotnet: 1.0.0-preview2-003131
 install:
   - nuget restore JohannesBorg.sln
   - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
