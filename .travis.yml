@@ -6,11 +6,7 @@ env: DOTNETCORE=1
 
 solution: JohannesBorg.sln
 
-before_install:
-  - time wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-  - mono nuget.exe install
 install:
-  - nuget
   - nuget restore JohannesBorg.sln
   - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
 script:
