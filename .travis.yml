@@ -11,5 +11,5 @@ install:
   - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
 script:
   - dotnet --version
-  - dotnet /p:Configuration=Release JohannesBorg.sln
+  - dotnet JohannesBorg.sln
   - dotnet ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./JohannesBorg.Tests/bin/Release/JohannesBorg.Tests.dll
