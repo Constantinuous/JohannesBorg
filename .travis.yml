@@ -1,15 +1,8 @@
 language: csharp
-dotnet: 1.0.0-preview2-003131
-dist: trusty
-sudo: false
-env: DOTNETCORE=1
-
 solution: JohannesBorg.sln
-
 install:
   - nuget restore JohannesBorg.sln
   - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
 script:
-  - dotnet --version
-  - dotnet JohannesBorg.sln
-  - dotnet ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./JohannesBorg.Tests/bin/Release/JohannesBorg.Tests.dll
+  - xbuild /p:Configuration=Release JohannesBorg.sln
+  - mono ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./JohannesBorg.Tests/bin/Release/JohannesBorg.Tests.dll
