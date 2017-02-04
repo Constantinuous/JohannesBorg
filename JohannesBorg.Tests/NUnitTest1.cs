@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 namespace JohannesBorg.Tests
 {
@@ -8,6 +9,7 @@ namespace JohannesBorg.Tests
         [Test]
         public void TestMethod1()
         {
+            new Class1().Should().NotBeNull();
         }
     }
 }
