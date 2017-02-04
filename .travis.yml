@@ -10,9 +10,9 @@ solution: JohannesBorg.sln
 before_install:
   - time wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
 install:
-  - nuget
-  - nuget restore JohannesBorg.sln
-  - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
+  - nuget.exe
+  - nuget.exe restore JohannesBorg.sln
+  - nuget.exe install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
 script:
   - dotnet --version
   - dotnet /p:Configuration=Release JohannesBorg.sln
