@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System.Data;
+using System.Data.SQLite;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -14,12 +15,11 @@ namespace JohannesBorg.Tests
         public void TestMethod1()
         {
             new Class1().Should().NotBeNull();
-
+            
 
             int resultCount = 0;
-            using (SQLiteConnection connection = new SQLiteConnection())
+            using (IDbConnection connection = new SQLiteConnection("FullUri=file::memory:?cache=shared"))
             {
-                connection.ConnectionString = "FullUri=file::memory:?cache=shared";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
