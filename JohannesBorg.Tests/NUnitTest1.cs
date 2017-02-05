@@ -1,6 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.IO;
+using FluentAssertions;
 using NUnit.Framework;
 using SQLite;
+using static JohannesBorg.Tests.Common.Assembly;
 
 namespace JohannesBorg.Tests
 {
@@ -24,9 +27,18 @@ namespace JohannesBorg.Tests
         {
             new Class1().Should().NotBeNull();
 
+            var folder = Path.Combine(AssemblyDirectory, "..", "tmp");
+            var dirInfo = new DirectoryInfo(folder);
+
+            if (dirInfo.Exists)
+            {
+                dirInfo.Delete(recursive: true);
+                dirInfo.Refresh();
+            }
+            dirInfo.Create();
 
             int resultCount = 0;
-            using (SQLiteConnection connection = new SQLiteConnection("foofoo"))
+            using (SQLiteConnection connection = new SQLiteConnection(System.IO.Path.Combine(folder, "foofoo.db")))
             {
                 var tableCommand = connection.CreateCommand(CreateTable);
                 tableCommand.ExecuteNonQuery();
@@ -36,25 +48,16 @@ namespace JohannesBorg.Tests
                             VALUES (1,'blib');
                     ");
 
-                var reader = insertCommand.ExecuteNonQuery();
-                //foreach (var o in reader)
-                //{
-                //    resultCount++;
-                //}
+                insertCommand.ExecuteNonQuery();
 
-                //using (var command = connection.CreateCommand())
-                //{
-                //    command.CommandText = @"
-                //        SELECT * FROM Persons
-                //    ";
-                //    using (var reader = command.ExecuteReader())
-                //    {
-                //        while (reader.Read())
-                //        {
-                //            resultCount++;
-                //        }
-                //    }
-                //}
+                var selectCommand = connection.CreateCommand(@"
+                        SELECT * FROM Persons
+                    ");
+                var data = selectCommand.ExecuteQuery<object>();
+                foreach (var o in data)
+                {
+                    resultCount++;
+                }
             }
             resultCount.Should().Be(1);
         }
