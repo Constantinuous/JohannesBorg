@@ -5,4 +5,4 @@ install:
   - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release JohannesBorg.sln
-  - mono ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./JohannesBorg.Tests/bin/Release/JohannesBorg.Tests.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./JohannesBorg.Tests/bin/Release/JohannesBorg.Tests.dll --params=excelFilePath=testPath

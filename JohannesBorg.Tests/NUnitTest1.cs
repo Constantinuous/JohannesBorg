@@ -25,6 +25,9 @@ namespace JohannesBorg.Tests
         [Test]
         public void TestMethod1()
         {
+            Console.WriteLine("--------------------------------");
+            Console.WriteLine($"Params are: {TestContext.Parameters["excelFilePath"]}");
+
             new Class1().Should().NotBeNull();
 
             var folder = Path.Combine(AssemblyDirectory, "..", "tmp");
