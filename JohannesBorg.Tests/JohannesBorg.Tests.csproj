@@ -89,6 +89,7 @@
     <Compile Include="Common\Assembly.cs" />
     <Compile Include="NUnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestData\Persons.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

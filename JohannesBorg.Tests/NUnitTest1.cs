@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SQLite;
 using FluentAssertions;
 using JohannesBorg.Tests.CommandLine;
+using JohannesBorg.Tests.TestData;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
 
@@ -51,53 +52,18 @@ namespace JohannesBorg.Tests
         [Test]
         public void TestInsertAndSelectStatements()
         {
-            new Class1().Should().NotBeNull();
+            var persons = new Persons(_connection);
+            persons.CreateTable();
+            persons.Insert(1, "blib");
 
-            int resultCount = 0;
+            var resultCount = persons.Count();
 
-            using (var command = _connection.CreateCommand())
-            {
-                command.CommandText = @"
-                CREATE TABLE Persons
-                (
-                PersonID int,
-                LastName varchar(255),
-                FirstName varchar(255),
-                Address varchar(255),
-                City varchar(255)
-                ); 
-            ";
-                command.ExecuteNonQuery();
-            }
-            using (var command = _connection.CreateCommand())
-            {
-                command.CommandText = @"
-                    INSERT INTO Persons (PersonID,LastName)
-                        VALUES (1,'blib');
-                ";
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        resultCount++;
-                    }
-                }
-            }
-
-            using (var command = _connection.CreateCommand())
-            {
-                command.CommandText = @"
-                    SELECT * FROM Persons
-                ";
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        resultCount++;
-                    }
-                }
-            }
             resultCount.Should().Be(1);
+        }
+
+        public void TestClassConstructor()
+        {
+            new Class1().Should().NotBeNull();
         }
     }
 }
