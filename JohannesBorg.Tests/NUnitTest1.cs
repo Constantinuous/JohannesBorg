@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Data;
-using System.IO;
+using System.Data.SQLite;
 using FluentAssertions;
 using JohannesBorg.Tests.CommandLine;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
-using SQLite;
-using static JohannesBorg.Tests.Common.Assembly;
 
 namespace JohannesBorg.Tests
 {
@@ -25,62 +23,78 @@ namespace JohannesBorg.Tests
                     ); 
         ";
 
+        private IDbConnection _connection;
 
-        [Test]
-        public void TravisTest()
+        [SetUp]
+        public void BeforeEachTest()
         {
             if (CommandLine.Values.Context == Context.Travis)
             {
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine($"I'm running on Travis");
-                using (IDbConnection connection = new MySqlConnection(@"Server=127.0.0.1;Uid=root;Pwd=;Database=TEST_DB;"))
-                {
-                    connection.Open();
-                }
-                    
+                _connection = new MySqlConnection(@"Server=127.0.0.1;Uid=root;Pwd=;Database=TEST_DB;");
             }
+            else
+            {
+                _connection = new SQLiteConnection("FullUri=file::memory:?cache=shared");
+            }
+            _connection.Open();
+        }
+
+        [TearDown]
+        public void AfterEachTest()
+        {
+            _connection.Dispose();
         }
 
 
         [Test]
-        public void TestSqlLite()
+        public void TestInsertAndSelectStatements()
         {
-
-            Console.WriteLine("--------------------------------");
-            Console.WriteLine($"Params are: {CommandLine.Values.Context}");
-
             new Class1().Should().NotBeNull();
 
-            var folder = Path.Combine(AssemblyDirectory, "..", "tmp");
-            var dirInfo = new DirectoryInfo(folder);
-
-            if (dirInfo.Exists)
-            {
-                dirInfo.Delete(recursive: true);
-                dirInfo.Refresh();
-            }
-            dirInfo.Create();
-
             int resultCount = 0;
-            using (SQLiteConnection connection = new SQLiteConnection(System.IO.Path.Combine(folder, "foofoo.db")))
+
+            using (var command = _connection.CreateCommand())
             {
-                var tableCommand = connection.CreateCommand(CreateTable);
-                tableCommand.ExecuteNonQuery();
-
-                var insertCommand = connection.CreateCommand(@"
-                        INSERT INTO Persons (PersonID,LastName)
-                            VALUES (1,'blib');
-                    ");
-
-                insertCommand.ExecuteNonQuery();
-
-                var selectCommand = connection.CreateCommand(@"
-                        SELECT * FROM Persons
-                    ");
-                var data = selectCommand.ExecuteQuery<object>();
-                foreach (var o in data)
+                command.CommandText = @"
+                CREATE TABLE Persons
+                (
+                PersonID int,
+                LastName varchar(255),
+                FirstName varchar(255),
+                Address varchar(255),
+                City varchar(255)
+                ); 
+            ";
+                command.ExecuteNonQuery();
+            }
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = @"
+                    INSERT INTO Persons (PersonID,LastName)
+                        VALUES (1,'blib');
+                ";
+                using (var reader = command.ExecuteReader())
                 {
-                    resultCount++;
+                    while (reader.Read())
+                    {
+                        resultCount++;
+                    }
+                }
+            }
+
+            using (var command = _connection.CreateCommand())
+            {
+                command.CommandText = @"
+                    SELECT * FROM Persons
+                ";
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        resultCount++;
+                    }
                 }
             }
             resultCount.Should().Be(1);
