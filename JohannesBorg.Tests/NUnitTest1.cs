@@ -1,6 +1,6 @@
-﻿using System.Data.SQLite;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
+using SQLite;
 
 namespace JohannesBorg.Tests
 {
@@ -8,22 +8,7 @@ namespace JohannesBorg.Tests
     public class NUnitTest1
     {
 
-
-
-        [Test]
-        public void TestMethod1()
-        {
-            new Class1().Should().NotBeNull();
-
-
-            int resultCount = 0;
-            using (SQLiteConnection connection = new SQLiteConnection())
-            {
-                connection.ConnectionString = "FullUri=file::memory:?cache=shared";
-                connection.Open();
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = @"
+        private readonly string CreateTable = @"
                     CREATE TABLE Persons
                     (
                     PersonID int,
@@ -32,37 +17,44 @@ namespace JohannesBorg.Tests
                     Address varchar(255),
                     City varchar(255)
                     ); 
-                ";
-                    command.ExecuteNonQuery();
-                }
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = @"
+        ";
+
+        [Test]
+        public void TestMethod1()
+        {
+            new Class1().Should().NotBeNull();
+
+
+            int resultCount = 0;
+            using (SQLiteConnection connection = new SQLiteConnection("foofoo"))
+            {
+                var tableCommand = connection.CreateCommand(CreateTable);
+                tableCommand.ExecuteNonQuery();
+
+                var insertCommand = connection.CreateCommand(@"
                         INSERT INTO Persons (PersonID,LastName)
                             VALUES (1,'blib');
-                    ";
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            resultCount++;
-                        }
-                    }
-                }
+                    ");
 
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = @"
-                        SELECT * FROM Persons
-                    ";
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            resultCount++;
-                        }
-                    }
-                }
+                var reader = insertCommand.ExecuteNonQuery();
+                //foreach (var o in reader)
+                //{
+                //    resultCount++;
+                //}
+
+                //using (var command = connection.CreateCommand())
+                //{
+                //    command.CommandText = @"
+                //        SELECT * FROM Persons
+                //    ";
+                //    using (var reader = command.ExecuteReader())
+                //    {
+                //        while (reader.Read())
+                //        {
+                //            resultCount++;
+                //        }
+                //    }
+                //}
             }
             resultCount.Should().Be(1);
         }
