@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using FluentAssertions;
 using JohannesBorg.Tests.CommandLine;
@@ -26,13 +27,13 @@ namespace JohannesBorg.Tests
 
 
         [Test]
-        public void TestMethod2()
+        public void TravisTest()
         {
             if (CommandLine.Values.Context == Context.Travis)
             {
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine($"I'm running on Travis");
-                using (MySqlConnection connection = new MySqlConnection(@"Server=127.0.0.1;Uid=root;Pwd=;Database=dotnet;"))
+                using (IDbConnection connection = new MySqlConnection(@"Server=127.0.0.1;Uid=root;Pwd=;Database=dotnet;"))
                 {
                     connection.Open();
                 }
@@ -42,11 +43,11 @@ namespace JohannesBorg.Tests
 
 
         [Test]
-        public void TestMethod1()
+        public void TestSqlLite()
         {
 
             Console.WriteLine("--------------------------------");
-            Console.WriteLine($"Params are: {TestContext.Parameters["excelFilePath"]}");
+            Console.WriteLine($"Params are: {CommandLine.Values.Context}");
 
             new Class1().Should().NotBeNull();
 
