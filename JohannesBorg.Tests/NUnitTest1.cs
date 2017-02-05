@@ -33,7 +33,7 @@ namespace JohannesBorg.Tests
             {
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine($"I'm running on Travis");
-                using (IDbConnection connection = new MySqlConnection(@"Server=127.0.0.1;Uid=root;Pwd=;Database=dotnet;"))
+                using (IDbConnection connection = new MySqlConnection(@"Server=127.0.0.1;Uid=root;Pwd=;Database=TEST_DB;"))
                 {
                     connection.Open();
                 }
