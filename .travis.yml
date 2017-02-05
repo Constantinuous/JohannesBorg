@@ -1,8 +1,13 @@
 language: csharp
 solution: JohannesBorg.sln
+services:
+  - mysql
+  
 install:
   - nuget restore JohannesBorg.sln
   - nuget install NUnit.Runners -Version 3.6.0 -OutputDirectory testrunner
+  
 script:
+  - mysql -e 'SELECT NOW()'
   - xbuild /p:Configuration=Release JohannesBorg.sln
   - mono ./testrunner/NUnit.ConsoleRunner.3.6.0/tools/nunit3-console.exe ./JohannesBorg.Tests/bin/Release/JohannesBorg.Tests.dll --params=excelFilePath=testPath

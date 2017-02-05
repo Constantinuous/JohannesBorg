@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using FluentAssertions;
+using JohannesBorg.Tests.CommandLine;
+using MySql.Data.MySqlClient;
 using NUnit.Framework;
 using SQLite;
 using static JohannesBorg.Tests.Common.Assembly;
@@ -22,9 +24,27 @@ namespace JohannesBorg.Tests
                     ); 
         ";
 
+
+        [Test]
+        public void TestMethod2()
+        {
+            if (CommandLine.Values.Context == Context.Travis)
+            {
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine($"I'm running on Travis");
+                using (MySqlConnection connection = new MySqlConnection(@"Server=127.0.0.1;Uid=root;Pwd=;Database=dotnet;"))
+                {
+                    connection.Open();
+                }
+                    
+            }
+        }
+
+
         [Test]
         public void TestMethod1()
         {
+
             Console.WriteLine("--------------------------------");
             Console.WriteLine($"Params are: {TestContext.Parameters["excelFilePath"]}");
 
